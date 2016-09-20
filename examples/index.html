@@ -58,7 +58,8 @@
     const marker1 = mapDriver.createMarker({
       lat: 51.473663,
       lng: -0.203287 ,
-      icon: 'http://www.philippetersen.co.uk/images/car-icon.png?1400146158'
+      icon: 'http://macaulay.cuny.edu/eportfolios/borders/files/leaflet-maps-marker-icons/sportutilityvehicle.png',
+      infoWindow: () => `<p> The time now is ${new Date().toString().slice(16, 24)}</p>`
     })
 
     // Move marker
@@ -75,10 +76,10 @@
       const marker2 = mapDriver.createMarker({
         lat: coords[0].lat,
         lng: coords[0].lng,
-        icon: 'http://cre8mania.com/sites/all/themes/cre/images/icons/bike.gif',
-        // // Info window receives a function to be called
-        // // when marker is clicked. Should return an HTMLElement.
-        // infoWindow: () => document.createElement('div'),
+        icon: 'https://upload.wikimedia.org/wikipedia/commons/4/4c/Map_marker_icon_%E2%80%93_Nicolas_Mollet_%E2%80%93_Bike_rising_%E2%80%93_Sports_%E2%80%93_Dark.png',
+        // Info window receives a function to be called
+        // when marker is clicked. Should return an HTMLElement.
+        infoWindow: '<h1>Oh yeah!</h1>',
       });
 
       setTimeout(
@@ -96,7 +97,7 @@
 
     setTimeout(() => {
       mapDriver.destroyMarker(marker1);
-    }, 3000);
+    }, 7000);
 
   })
 </script>

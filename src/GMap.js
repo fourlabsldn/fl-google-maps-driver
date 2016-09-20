@@ -56,11 +56,16 @@ export default function GMap(google) {
     return marker;
   }
 
+  function createInfoWindow() {
+    return new google.maps.InfoWindow({});
+  }
+
   return {
     addressToLatLng,
     createBounds,
     createMap,
     createPosition,
     createMarker,
+    createInfoWindow,
   };
 }

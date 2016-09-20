@@ -27,6 +27,7 @@ export default class MapDriver {
 
     this.gmap = new GMap(google);
     this.map = this.gmap.createMap(mapContainer, options);
+    this.infoWindow = this.gmap.createInfoWindow();
     this.markers = [];
     Object.preventExtensions(this);
   }
@@ -59,6 +60,14 @@ export default class MapDriver {
    */
   createMarker(config) {
     const marker = this.gmap.createMarker(this.map, config);
+    if (config.infoWindow) {
+      const infoContent = typeof config.infoWindow === 'function'
+        ? config.infoWindow
+        : () => config.infoWindow;
+
+      marker.addListener('click', () => this.showInfoWindow(marker, infoContent()));
+    }
+
     this.addMarker(marker);
     return marker;
   }
@@ -123,5 +132,17 @@ export default class MapDriver {
    */
   async toLatLng(address) {
     return this.gmap.addressToLatLng(address);
+  }
+
+  /**
+   * @private
+   * @method showInfoWindow
+   * @param {Marker} marker
+   * @param {String} content
+   */
+  showInfoWindow(marker, content) {
+    this.infoWindow.setContent(content);
+    this.infoWindow.open(this.map, marker);
+    return this;
   }
 }

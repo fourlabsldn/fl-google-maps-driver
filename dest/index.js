@@ -130,12 +130,17 @@ function GMap(google) {
     return marker;
   }
 
+  function createInfoWindow() {
+    return new google.maps.InfoWindow({});
+  }
+
   return {
     addressToLatLng,
     createBounds,
     createMap,
     createPosition,
-    createMarker
+    createMarker,
+    createInfoWindow
   };
 }
 
@@ -267,6 +272,7 @@ class MapDriver {
 
     this.gmap = new GMap(google);
     this.map = this.gmap.createMap(mapContainer, options);
+    this.infoWindow = this.gmap.createInfoWindow();
     this.markers = [];
     Object.preventExtensions(this);
   }
@@ -299,6 +305,12 @@ class MapDriver {
    */
   createMarker(config) {
     const marker = this.gmap.createMarker(this.map, config);
+    if (config.infoWindow) {
+      const infoContent = typeof config.infoWindow === 'function' ? config.infoWindow : () => config.infoWindow;
+
+      marker.addListener('click', () => this.showInfoWindow(marker, infoContent()));
+    }
+
     this.addMarker(marker);
     return marker;
   }
@@ -367,6 +379,18 @@ class MapDriver {
     return asyncToGenerator(function* () {
       return _this.gmap.addressToLatLng(address);
     })();
+  }
+
+  /**
+   * @private
+   * @method showInfoWindow
+   * @param {Marker} marker
+   * @param {String} content
+   */
+  showInfoWindow(marker, content) {
+    this.infoWindow.setContent(content);
+    this.infoWindow.open(this.map, marker);
+    return this;
   }
 }
 
