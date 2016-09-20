@@ -1,8 +1,8 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
-  typeof define === 'function' && define.amd ? define(factory) :
-  (global.flMaps = factory());
-}(this, (function () { 'use strict';
+  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('lodash/fp')) :
+  typeof define === 'function' && define.amd ? define(['lodash/fp'], factory) :
+  (global.flMaps = factory(global.lodash_fp));
+}(this, (function (lodash_fp) { 'use strict';
 
 // Bug checking function that will throw an error whenever
 // the condition sent to it is evaluated to false
@@ -76,6 +76,69 @@ assert.warn = function warn(condition, errorMessage) {
   }
 };
 
+// Google API Methods
+const geocodingUrl = 'https://maps.googleapis.com/maps/api/geocode/json';
+
+function GMap(google) {
+  const DEFAULTS = {
+    apiKey: 'AIzaSyACR9XwTnLLG11mr2ncrIgR7vwAlAzBK08',
+    mapOptions: {
+      center: { lat: 51.473663, lng: -0.203287 },
+      mapTypeId: google.maps.MapTypeId.ROADMAP,
+      zoom: 14,
+      scrollwheel: false,
+      maxZoom: 17
+    }
+  };
+
+  function addressToLatLng(address, apiKey = DEFAULTS.apiKey) {
+    const encodedAddress = encodeURIComponent(address);
+    const url = `${ geocodingUrl }?address=${ encodedAddress }&key=${ apiKey }`;
+    // Get url and safely get properties
+    return fetch(url).then(r => r.json()).then(lodash_fp.get('results[0].geometry.location'));
+  }
+
+  /**
+   * @method createBounds
+   * @return {Object} - map bounds
+   */
+  function createBounds() {
+    return new google.maps.LatLngBounds();
+  }
+
+  /**
+   * @param {HTMLElement} mapContainer
+   * @param {Object} options
+   * @return map
+   */
+  function createMap(mapContainer, options = {}) {
+    const mapOptions = Object.assign({}, DEFAULTS.mapOptions, options);
+    const map = new google.maps.Map(mapContainer, mapOptions);
+    return map;
+  }
+
+  function createPosition(lat, lng) {
+    return new google.maps.LatLng(lat, lng);
+  }
+
+  function createMarker(map, config) {
+    assert(config, 'No marker configuration provided');
+    assert(config.position, 'No marker position provided');
+    const position = createPosition(config.lat, config.lng);
+    const markerConfig = Object.assign({}, config, { position, map });
+    const marker = new google.maps.Marker(markerConfig);
+    return marker;
+  }
+
+  return {
+    addressToLatLng,
+    createBounds,
+    createMap,
+    createPosition,
+    createMarker
+  };
+}
+
 var asyncToGenerator = function (fn) {
   return function () {
     var gen = fn.apply(this, arguments);
@@ -115,7 +178,7 @@ var asyncToGenerator = function (fn) {
 
 
 
-var get = function get(object, property, receiver) {
+var get$1 = function get$1(object, property, receiver) {
   if (object === null) object = Function.prototype;
   var desc = Object.getOwnPropertyDescriptor(object, property);
 
@@ -125,7 +188,7 @@ var get = function get(object, property, receiver) {
     if (parent === null) {
       return undefined;
     } else {
-      return get(parent, property, receiver);
+      return get$1(parent, property, receiver);
     }
   } else if ("value" in desc) {
     return desc.value;
@@ -179,54 +242,19 @@ var set = function set(object, property, value, receiver) {
 };
 
 /* globals google */
-const DEFAULTS = {
-  apiKey: 'AIzaSyACR9XwTnLLG11mr2ncrIgR7vwAlAzBK08',
-  mapOptions: {
-    center: { lat: 51.473663, lng: -0.203287 },
-    mapTypeId: google.maps.MapTypeId.ROADMAP,
-    zoom: 14,
-    scrollwheel: false,
-    maxZoom: 17
-  }
-};
-
 function withoutIndex(array, index) {
   return array.slice(0, index).concat(array.slice(index + 1, array.length));
 }
 
-/**
- * @function createMap
- * @param {HTMLElement} mapContainer
- * @param {Object} options
- * @return map
- */
-function createMap(mapContainer, options = {}) {
-  const mapOptions = Object.assign({}, DEFAULTS.mapOptions, options);
-  const map = new google.maps.Map(mapContainer, mapOptions);
-  return map;
-}
-
-function createPosition(lat, lng) {
-  return new google.maps.LatLng(lat, lng);
-}
-
-function createMarker(map, config) {
-  assert(config, 'No marker configuration provided');
-  assert(config.position, 'No marker position provided');
-  const position = createPosition(config.lat, config.lng);
-  const markerConfig = Object.assign({}, config, { position, map });
-  const marker = new google.maps.Marker(markerConfig);
-  return marker;
-}
-
 class MapDriver {
-  constructor(mapContainerSelector, options) {
-    assert(window.google, 'Google Maps not loaded.');
+  constructor(google, mapContainerSelector, options) {
+    assert(google, 'Google Maps not loaded.');
     const mapContainer = document.querySelector(mapContainerSelector);
     const containerIsValid = mapContainer && mapContainer.nodeName;
     assert(containerIsValid, `Invalid map container from selector: ${ mapContainerSelector }`);
 
-    this.map = createMap(mapContainer, options);
+    this.gmap = new GMap(google);
+    this.map = this.gmap.createMap(mapContainer, options);
     this.markers = [];
     Object.preventExtensions(this);
   }
@@ -246,23 +274,25 @@ class MapDriver {
     return Array.from(this.markers);
   }
 
-  /**
-   * @public
-   */
   createMarker(config) {
     var _this = this;
 
     return asyncToGenerator(function* () {
-      const marker = createMarker(_this.map, config);
+      const coord = yield _this.toLatLng(config);
+      const fullConfig = Object.assign({}, config, coord);
+      const marker = _this.gmap.createMarker(_this.map, fullConfig);
       _this.addMarker(marker);
       return marker;
     })();
   }
 
   moveMarker(marker, destination) {
-    const position = createPosition(destination);
-    marker.setPosition(position);
-    return this;
+    var _this2 = this;
+
+    return asyncToGenerator(function* () {
+      lodash_fp.flow((yield _this2.toLatLng), _this2.gmap.createPosition, marker.setPosition)(destination);
+      return _this2;
+    })();
   }
 
   destroyMarker(marker) {
@@ -271,6 +301,21 @@ class MapDriver {
     this.markers = withoutIndex(this.markers, mIndex);
     marker.setMap(null);
     return this;
+  }
+
+  focusMarkers(markers) {
+    const bounds = this.gmap.createBounds();
+    markers.forEach(m => bounds.extend(m.getPosition()));
+    this.map.fitBounds(bounds);
+  }
+
+  toLatLng(address) {
+    var _this3 = this;
+
+    return asyncToGenerator(function* () {
+      const isPostcode = !address.lat && address.postcode;
+      return isPostcode ? yield _this3.gmap.addressToLatLng(address) : address;
+    })();
   }
 }
 

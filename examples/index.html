@@ -9,6 +9,7 @@
   	requirejs.config({
   		baseUrl: '/js',
   		paths: {
+        'lodash/fp': 'https://cdnjs.cloudflare.com/ajax/libs/lodash-fp/0.10.4/lodash-fp.min',
         'fl-google-maps-driver': '/dest/index',
   		},
   	});
@@ -26,6 +27,7 @@
       width: 500px;
       height: 500px;
       margin: auto;
+      box-shadow: 0 0 20px #999;
     }
   </style>
 </head>
@@ -37,7 +39,7 @@
 <script>
   require(['fl-google-maps-driver'], function (MapDriver) {
 
-    mapDriver = new MapDriver('#map', { center: { lat: 51.473663, lng: -0.203287 }});
+    mapDriver = new MapDriver(google, '#map', { center: { lat: 51.473663, lng: -0.203287 }});
 
     // // Crate markers with latitude and longitude
     // const marker1 = mapDriver.createMarker({ lat: 10, lng:10, icon: 'ico.gif' });
