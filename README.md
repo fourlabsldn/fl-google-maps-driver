@@ -1,5 +1,6 @@
 # Dead simple Google maps driver
 
+[Checkout the example](./examples/index.html)
 ## How to use:
 Give a look at the examples folder.
 ``` javascript
