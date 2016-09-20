@@ -1,7 +1,6 @@
 /* globals google */
 import assert from 'fl-assert';
 import GMap from './GMap';
-import { flow } from 'lodash/fp';
 
 function withoutIndex(array, index) {
   return array.slice(0, index).concat(array.slice(index + 1, array.length));
@@ -44,11 +43,37 @@ export default class MapDriver {
   }
 
   async moveMarker(marker, destination) {
-    flow(
-      await this.toLatLng,
-      this.gmap.createPosition,
-      marker.setPosition
-    )(destination);
+    function easeInOutQuad(t) {
+        return t < 0.5 ? 2 * t * t : - 1 + (4 - 2 * t) * t;
+    }
+
+    const fromCoord = {
+      lat: marker.getPosition().lat(),
+      lng: marker.getPosition().lng(),
+    };
+
+    const toCoord = await this.toLatLng(destination);
+    const coordDiff = {
+      lat: toCoord.lat - fromCoord.lat,
+      lng: toCoord.lng - fromCoord.lng,
+    };
+
+    const doFrame = (frameNo, totalFrames) => {
+      const currentPos = {
+        lat: easeInOutQuad(frameNo / totalFrames) * coordDiff.lat + fromCoord.lat,
+        lng: easeInOutQuad(frameNo / totalFrames) * coordDiff.lng + fromCoord.lng,
+      };
+      console.log('Current pos:', currentPos);
+      const pos = this.gmap.createPosition(currentPos);
+      marker.setPosition(pos);
+
+      if (frameNo < totalFrames) {
+        requestAnimationFrame(() => doFrame(frameNo + 1, totalFrames));
+      }
+    };
+
+    const frames = 200;
+    doFrame(0, frames);
     return this;
   }
 
@@ -69,7 +94,7 @@ export default class MapDriver {
   async toLatLng(address) {
     const isPostcode = !address.lat && address.postcode;
     return isPostcode
-      ? await this.gmap.addressToLatLng(address)
+      ? await this.gmap.addressToLatLng(address.postcode)
       : address;
   }
 }

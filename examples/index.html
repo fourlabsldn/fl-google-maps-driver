@@ -41,8 +41,17 @@
 
     mapDriver = new MapDriver(google, '#map', { center: { lat: 51.473663, lng: -0.203287 }});
 
-    // // Crate markers with latitude and longitude
-    // const marker1 = mapDriver.createMarker({ lat: 10, lng:10, icon: 'ico.gif' });
+    // Crate markers with latitude and longitude
+    mapDriver.createMarker({
+      lat: 51.473663,
+      lng: -0.203287 ,
+      icon: 'http://www.philippetersen.co.uk/images/car-icon.png?1400146158'
+    })
+    .then(marker1 => {
+      setTimeout(() => mapDriver.moveMarker(marker1, { postcode: 'London, UB6 9SH'  }), 1000)
+    })
+
+
     //
     // // Create markers with postcode
     // const marker2 = mapDriver.createMarker({

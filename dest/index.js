@@ -85,7 +85,7 @@ function GMap(google) {
     mapOptions: {
       center: { lat: 51.473663, lng: -0.203287 },
       mapTypeId: google.maps.MapTypeId.ROADMAP,
-      zoom: 14,
+      zoom: 10,
       scrollwheel: false,
       maxZoom: 17
     }
@@ -123,7 +123,7 @@ function GMap(google) {
 
   function createMarker(map, config) {
     assert(config, 'No marker configuration provided');
-    assert(config.position, 'No marker position provided');
+    assert(config.lat && config.lng, 'No marker position provided');
     const position = createPosition(config.lat, config.lng);
     const markerConfig = Object.assign({}, config, { position, map });
     const marker = new google.maps.Marker(markerConfig);
@@ -290,7 +290,39 @@ class MapDriver {
     var _this2 = this;
 
     return asyncToGenerator(function* () {
-      lodash_fp.flow((yield _this2.toLatLng), _this2.gmap.createPosition, marker.setPosition)(destination);
+      function easeInOutQuad(t) {
+        return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+      }
+
+      const fromCoord = {
+        lat: marker.getPosition().lat(),
+        lng: marker.getPosition().lng()
+      };
+
+      const toCoord = yield _this2.toLatLng(destination);
+      const coordDiff = {
+        lat: toCoord.lat - fromCoord.lat,
+        lng: toCoord.lng - fromCoord.lng
+      };
+
+      const doFrame = function (frameNo, totalFrames) {
+        const currentPos = {
+          lat: easeInOutQuad(frameNo / totalFrames) * coordDiff.lat + fromCoord.lat,
+          lng: easeInOutQuad(frameNo / totalFrames) * coordDiff.lng + fromCoord.lng
+        };
+        console.log('Current pos:', currentPos);
+        const pos = _this2.gmap.createPosition(currentPos);
+        marker.setPosition(pos);
+
+        if (frameNo < totalFrames) {
+          requestAnimationFrame(function () {
+            return doFrame(frameNo + 1, totalFrames);
+          });
+        }
+      };
+
+      const frames = 200;
+      doFrame(0, frames);
       return _this2;
     })();
   }
@@ -314,7 +346,7 @@ class MapDriver {
 
     return asyncToGenerator(function* () {
       const isPostcode = !address.lat && address.postcode;
-      return isPostcode ? yield _this3.gmap.addressToLatLng(address) : address;
+      return isPostcode ? yield _this3.gmap.addressToLatLng(address.postcode) : address;
     })();
   }
 }

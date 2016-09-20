@@ -9,7 +9,7 @@ export default function GMap(google) {
     mapOptions: {
       center: { lat: 51.473663, lng: -0.203287 },
       mapTypeId: google.maps.MapTypeId.ROADMAP,
-      zoom: 14,
+      zoom: 10,
       scrollwheel: false,
       maxZoom: 17,
     },
@@ -49,7 +49,7 @@ export default function GMap(google) {
 
   function createMarker(map, config) {
     assert(config, 'No marker configuration provided');
-    assert(config.position, 'No marker position provided');
+    assert(config.lat && config.lng, 'No marker position provided');
     const position = createPosition(config.lat, config.lng);
     const markerConfig = Object.assign({}, config, { position, map });
     const marker = new google.maps.Marker(markerConfig);
