@@ -327,7 +327,6 @@ class MapDriver {
       }
     };
     const durationInFrames = duration * 0.060;
-    console.log(durationInFrames);
     slideMarker(0, durationInFrames);
     return this;
   }

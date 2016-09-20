@@ -59,8 +59,6 @@
       mapDriver.toLatLng('SW1A 1AA, London'),
     ])
     .then(coords => {
-      console.log(coords)
-      // Create markers with postcode
       const marker2 = mapDriver.createMarker({
         lat: coords[0].lat,
         lng: coords[0].lng,
