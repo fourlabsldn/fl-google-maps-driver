@@ -42,35 +42,47 @@
     mapDriver = new MapDriver(google, '#map', { center: { lat: 51.473663, lng: -0.203287 }});
 
     // Crate markers with latitude and longitude
-    mapDriver.createMarker({
+    const marker1 = mapDriver.createMarker({
       lat: 51.473663,
       lng: -0.203287 ,
       icon: 'http://www.philippetersen.co.uk/images/car-icon.png?1400146158'
     })
-    .then(marker1 => {
-      setTimeout(() => mapDriver.moveMarker(marker1, { postcode: 'London, UB6 9SH'  }), 1000)
-    })
 
+    // Move marker
+    setTimeout(() => {
+      mapDriver.moveMarker(marker1, { lat: 51.579663, lng: -0.613287 })
+    }, 1000)
 
-    //
-    // // Create markers with postcode
-    // const marker2 = mapDriver.createMarker({
-    //   postcode: 'NW1AB2',
-    //   icon: 'ico.gif',
-    //   // Info window receives a function to be called
-    //   // when marker is clicked. Should return an HTMLElement.
-    //   infoWindow: () => document.createElement('div'),
-    // });
-    //
-    // // Ability to get all markers
-    // const allMarkers = mapDriver.getMarkers();
-    //
-    // // Move markers with lat and lng
-    // mapDriver.moveMarker(marker1, { lat: 20, lng: 20 });
-    //
-    // // Move markers with lat and lng
-    // mapDriver.moveMarker(marker2, { postcode: 20 });
-    //
-    // mapDriver.destroyMarker(marker2);
+    // get locations for addresses
+    Promise.all([
+      mapDriver.toLatLng('21 Heathmans Road, London, Uk'),
+      mapDriver.toLatLng('SW1A 1AA, London'),
+    ])
+    .then(coords => {
+      console.log(coords)
+      // Create markers with postcode
+      const marker2 = mapDriver.createMarker({
+        lat: coords[0].lat,
+        lng: coords[0].lng,
+        icon: 'http://cre8mania.com/sites/all/themes/cre/images/icons/bike.gif',
+        // // Info window receives a function to be called
+        // // when marker is clicked. Should return an HTMLElement.
+        // infoWindow: () => document.createElement('div'),
+      });
+
+      setTimeout(
+        () =>mapDriver.moveMarker(marker2, coords[1]),
+        1000
+      )
+    });
+
+    // Ability to get all markers
+    setTimeout(() => {
+      const allMarkers = mapDriver.getMarkers();
+      console.log(allMarkers)
+      mapDriver.focusMarkers(allMarkers)
+    }, 5000);
+
+    mapDriver.destroyMarker(marker1);
   })
 </script>

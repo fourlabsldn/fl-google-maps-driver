@@ -246,6 +246,18 @@ function withoutIndex(array, index) {
   return array.slice(0, index).concat(array.slice(index + 1, array.length));
 }
 
+function easeInOutQuad(t) {
+  return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+}
+
+function easeInOutCoord(frame, totalFrames, fromCoord, toCoord) {
+  const animPercentage = totalFrames ? frame / totalFrames : 1;
+  return {
+    lat: easeInOutQuad(animPercentage) * (toCoord.lat - fromCoord.lat) + fromCoord.lat,
+    lng: easeInOutQuad(animPercentage) * (toCoord.lng - fromCoord.lng) + fromCoord.lng
+  };
+}
+
 class MapDriver {
   constructor(google, mapContainerSelector, options) {
     assert(google, 'Google Maps not loaded.');
@@ -260,7 +272,10 @@ class MapDriver {
   }
 
   /**
+   * Adds a marker to this.markers list
    * @private
+   * @method addMarker
+   * @param {Marker}
    */
   addMarker(marker) {
     this.markers = this.markers.concat([marker]);
@@ -268,65 +283,60 @@ class MapDriver {
   }
 
   /**
+   * Returns all markers currently in the map
    * @public
+   * @return {Array<Marker>}
    */
   getMarkers() {
     return Array.from(this.markers);
   }
 
+  /**
+   * Creates a map marker
+   * @public
+   * @param {Object} config - Must have 'lat' and lng'
+   * @return {Marker}
+   */
   createMarker(config) {
-    var _this = this;
-
-    return asyncToGenerator(function* () {
-      const coord = yield _this.toLatLng(config);
-      const fullConfig = Object.assign({}, config, coord);
-      const marker = _this.gmap.createMarker(_this.map, fullConfig);
-      _this.addMarker(marker);
-      return marker;
-    })();
+    const marker = this.gmap.createMarker(this.map, config);
+    this.addMarker(marker);
+    return marker;
   }
 
-  moveMarker(marker, destination) {
-    var _this2 = this;
+  /**
+   * Animates a marker to a specific coordinate
+   * @public
+   * @param {Marker} marker
+   * @param {Object} destination - 'lat' and 'lng'
+   * @param {Int} duration - In milliseconds
+   */
+  moveMarker(marker, destination, duration = 1000) {
+    const toCoord = destination;
+    const fromCoord = {
+      lat: marker.getPosition().lat(),
+      lng: marker.getPosition().lng()
+    };
 
-    return asyncToGenerator(function* () {
-      function easeInOutQuad(t) {
-        return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+    const slideMarker = (frameNo, totalFrames) => {
+      const currentCoord = easeInOutCoord(frameNo, totalFrames, fromCoord, toCoord);
+      const pos = this.gmap.createPosition(currentCoord);
+      marker.setPosition(pos);
+
+      if (frameNo < totalFrames) {
+        requestAnimationFrame(() => slideMarker(frameNo + 1, totalFrames));
       }
-
-      const fromCoord = {
-        lat: marker.getPosition().lat(),
-        lng: marker.getPosition().lng()
-      };
-
-      const toCoord = yield _this2.toLatLng(destination);
-      const coordDiff = {
-        lat: toCoord.lat - fromCoord.lat,
-        lng: toCoord.lng - fromCoord.lng
-      };
-
-      const doFrame = function (frameNo, totalFrames) {
-        const currentPos = {
-          lat: easeInOutQuad(frameNo / totalFrames) * coordDiff.lat + fromCoord.lat,
-          lng: easeInOutQuad(frameNo / totalFrames) * coordDiff.lng + fromCoord.lng
-        };
-        console.log('Current pos:', currentPos);
-        const pos = _this2.gmap.createPosition(currentPos);
-        marker.setPosition(pos);
-
-        if (frameNo < totalFrames) {
-          requestAnimationFrame(function () {
-            return doFrame(frameNo + 1, totalFrames);
-          });
-        }
-      };
-
-      const frames = 200;
-      doFrame(0, frames);
-      return _this2;
-    })();
+    };
+    const durationInFrames = duration * 0.060;
+    console.log(durationInFrames);
+    slideMarker(0, durationInFrames);
+    return this;
   }
 
+  /**
+   * Removes a marker from the map.
+   * @public
+   * @param {Marker} marker
+   */
   destroyMarker(marker) {
     const mIndex = this.markers.indexOf(marker);
     assert(mIndex !== -1, 'Attempting to destroy a marker that is not in the map.');
@@ -335,18 +345,28 @@ class MapDriver {
     return this;
   }
 
+  /**
+   * Fits map's focus on specified markers
+   * @public
+   * @param {Array<Marker}
+   */
   focusMarkers(markers) {
     const bounds = this.gmap.createBounds();
     markers.forEach(m => bounds.extend(m.getPosition()));
     this.map.fitBounds(bounds);
   }
 
+  /**
+   * Converts an array into an object with 'lat' and 'lng'
+   * @public
+   * @param {String} address
+   * @return {Object}
+   */
   toLatLng(address) {
-    var _this3 = this;
+    var _this = this;
 
     return asyncToGenerator(function* () {
-      const isPostcode = !address.lat && address.postcode;
-      return isPostcode ? yield _this3.gmap.addressToLatLng(address.postcode) : address;
+      return _this.gmap.addressToLatLng(address);
     })();
   }
 }
