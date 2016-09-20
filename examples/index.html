@@ -15,9 +15,11 @@
   	});
   </script>
 
+  <link rel="stylesheet" href="style.css">
   <style>
     body{
       display: flex;
+      flex-flow: column nowrap;
       width: 100vw;
       height: 100vh;
       background-color: f0f0f0;
@@ -26,17 +28,28 @@
     #map {
       width: 500px;
       height: 500px;
-      margin: auto;
+      margin: 0 auto;
       box-shadow: 0 0 20px #999;
     }
   </style>
 </head>
 <body>
-
+  <h1><a href="https://github.com/lazamar/fl-google-maps-driver">fl-google-maps-driver</a></h1>
   <div id="map"></div>
 
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCKdTnpxORlxfcVsuASHCeozz1CCMLM0u4"></script>
 <script>
+  //
+  //
+  //
+  //
+  //    MAP CODE
+  //
+  //
+  //
+  //
+  //
+  //
   require(['fl-google-maps-driver'], function (MapDriver) {
 
     mapDriver = new MapDriver(google, '#map', { center: { lat: 51.473663, lng: -0.203287 }});
