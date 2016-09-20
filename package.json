@@ -1,0 +1,51 @@
+{
+  "name": "fl-google-maps-driver",
+  "version": "0.1.0",
+  "description": "Dead simple Google maps driver",
+  "main": "dest/index.js",
+  "directories": {
+    "example": "examples"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lazamar/fl-google-maps-driver.git"
+  },
+  "keywords": [
+    "google",
+    "maps",
+    "driver"
+  ],
+  "author": "Lazamar @ FourLabs",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lazamar/fl-google-maps-driver/issues"
+  },
+  "homepage": "https://github.com/lazamar/fl-google-maps-driver#readme",
+  "devDependencies": {
+    "babel-cli": "^6.14.0",
+    "babel-plugin-external-helpers-2": "^6.3.13",
+    "babel-plugin-transform-async-to-generator": "^6.8.0",
+    "babel-preset-es2015-rollup": "^1.2.0",
+    "babel-preset-es2017": "^6.14.0",
+    "babel-preset-latest": "^6.14.0",
+    "browser-sync": "^2.16.0",
+    "fl-assert": "^1.0.10",
+    "gulp": "^3.9.1",
+    "gulp-flatmap": "^1.0.0",
+    "gulp-organiser": "^1.0.6",
+    "gulp-sourcemaps": "^1.6.0",
+    "gulp-uglify": "^2.0.0",
+    "lodash": "^4.16.0",
+    "path": "^0.12.7",
+    "rollup-plugin-babel": "^2.6.1",
+    "rollup-plugin-commonjs": "^5.0.4",
+    "rollup-plugin-node-resolve": "^2.0.0",
+    "rollup-plugin-replace": "^1.1.1",
+    "rollup-stream": "^1.14.0",
+    "vinyl-buffer": "^1.0.0",
+    "vinyl-source-stream": "^1.1.0"
+  }
+}

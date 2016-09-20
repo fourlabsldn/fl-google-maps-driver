@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>fl-google-maps-driver</title>
+  <!-- RequireJS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js"></script>
+  <script type="text/javascript">
+  	requirejs.config({
+  		baseUrl: '/js',
+  		paths: {
+        'fl-google-maps-driver': '/dest/index',
+  		},
+  	});
+  </script>
+
+  <style>
+    body{
+      display: flex;
+      width: 100vw;
+      height: 100vh;
+      background-color: f0f0f0;
+    }
+
+    #map {
+      width: 500px;
+      height: 500px;
+      margin: auto;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="map"></div>
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCKdTnpxORlxfcVsuASHCeozz1CCMLM0u4"></script>
+<script>
+  require(['fl-google-maps-driver'], function (MapDriver) {
+
+    mapDriver = new MapDriver('#map', { center: { lat: 51.473663, lng: -0.203287 }});
+
+    // // Crate markers with latitude and longitude
+    // const marker1 = mapDriver.createMarker({ lat: 10, lng:10, icon: 'ico.gif' });
+    //
+    // // Create markers with postcode
+    // const marker2 = mapDriver.createMarker({
+    //   postcode: 'NW1AB2',
+    //   icon: 'ico.gif',
+    //   // Info window receives a function to be called
+    //   // when marker is clicked. Should return an HTMLElement.
+    //   infoWindow: () => document.createElement('div'),
+    // });
+    //
+    // // Ability to get all markers
+    // const allMarkers = mapDriver.getMarkers();
+    //
+    // // Move markers with lat and lng
+    // mapDriver.moveMarker(marker1, { lat: 20, lng: 20 });
+    //
+    // // Move markers with lat and lng
+    // mapDriver.moveMarker(marker2, { postcode: 20 });
+    //
+    // mapDriver.destroyMarker(marker2);
+  })
+</script>
