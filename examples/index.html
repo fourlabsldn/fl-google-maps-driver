@@ -73,7 +73,7 @@
       mapDriver.toLatLng('SW1A 1AA, London'),
     ])
     .then(coords => {
-      const marker2 = mapDriver.createMarker({
+      marker2 = mapDriver.createMarker({
         lat: coords[0].lat,
         lng: coords[0].lng,
         icon: 'https://upload.wikimedia.org/wikipedia/commons/4/4c/Map_marker_icon_%E2%80%93_Nicolas_Mollet_%E2%80%93_Bike_rising_%E2%80%93_Sports_%E2%80%93_Dark.png',
@@ -96,8 +96,8 @@
 
 
     setTimeout(() => {
-      mapDriver.destroyMarker(marker1);
-    }, 7000);
+      mapDriver.destroyMarker(marker2);
+    }, 3000);
 
   })
 </script>
