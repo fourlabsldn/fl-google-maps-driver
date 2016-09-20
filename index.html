@@ -1,0 +1,137 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Fl-google-maps-driver by lazamar</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/github-light.css">
+    <meta name="viewport" content="width=device-width">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Fl-google-maps-driver</h1>
+        <p>Dead simple driver for google maps. Making creating maps, markers, infoWindows and marker animations simpler.</p>
+
+        <p class="view"><a href="https://github.com/lazamar/fl-google-maps-driver">View the Project on GitHub <small>lazamar/fl-google-maps-driver</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/lazamar/fl-google-maps-driver/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/lazamar/fl-google-maps-driver/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/lazamar/fl-google-maps-driver">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>
+<a id="dead-simple-google-maps-driver" class="anchor" href="#dead-simple-google-maps-driver" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Dead simple Google maps driver</h1>
+
+<h2>
+<a id="how-to-use" class="anchor" href="#how-to-use" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>How to use:</h2>
+
+<p>Give a look at the examples folder.</p>
+
+<div class="highlight highlight-source-js"><pre>  <span class="pl-k">const</span> <span class="pl-c1">mapDriver</span> <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-en">MapDriver</span>(google, <span class="pl-s"><span class="pl-pds">'</span>#map<span class="pl-pds">'</span></span>, { center<span class="pl-k">:</span> { lat<span class="pl-k">:</span> <span class="pl-c1">51.473663</span>, lng<span class="pl-k">:</span> <span class="pl-k">-</span><span class="pl-c1">0.203287</span> }});
+
+  <span class="pl-c">// Crate markers with latitude and longitude</span>
+  <span class="pl-k">const</span> <span class="pl-c1">marker</span> <span class="pl-k">=</span> <span class="pl-smi">mapDriver</span>.<span class="pl-en">createMarker</span>({
+     lat<span class="pl-k">:</span> <span class="pl-c1">51.473663</span>,
+     lng<span class="pl-k">:</span> <span class="pl-k">-</span><span class="pl-c1">0.203287</span> ,
+     icon<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>http://example.com/icon.jpg<span class="pl-pds">'</span></span>
+  });
+
+  <span class="pl-c">// Move marker</span>
+  <span class="pl-smi">mapDriver</span>.<span class="pl-en">moveMarker</span>(marker, { lat<span class="pl-k">:</span> <span class="pl-c1">51.579663</span>, lng<span class="pl-k">:</span> <span class="pl-k">-</span><span class="pl-c1">0.613287</span> });
+
+  <span class="pl-c">// Set anination duration</span>
+  <span class="pl-smi">mapDriver</span>.<span class="pl-en">moveMarker</span>(marker, { lat<span class="pl-k">:</span> <span class="pl-c1">51.579663</span>, lng<span class="pl-k">:</span> <span class="pl-k">-</span><span class="pl-c1">0.613287</span> }, <span class="pl-c1">2500</span>);
+
+  <span class="pl-c">// get locations for addresses</span>
+  <span class="pl-smi">mapDriver</span>.<span class="pl-en">toLatLng</span>(<span class="pl-s"><span class="pl-pds">'</span>21 Heathmans Road, London, Uk<span class="pl-pds">'</span></span>)
+  .<span class="pl-en">then</span>(<span class="pl-smi">coord</span> <span class="pl-k">=&gt;</span> {
+    <span class="pl-k">const</span> <span class="pl-c1">marker2</span> <span class="pl-k">=</span> <span class="pl-smi">mapDriver</span>.<span class="pl-en">createMarker</span>({
+      lat<span class="pl-k">:</span> <span class="pl-smi">coords</span>.<span class="pl-smi">lat</span>,
+      lng<span class="pl-k">:</span> <span class="pl-smi">coords</span>.<span class="pl-smi">lng</span>,
+    });
+  });
+
+  <span class="pl-c">// Get existing markers</span>
+  <span class="pl-k">const</span> <span class="pl-c1">allMarkers</span> <span class="pl-k">=</span> <span class="pl-smi">mapDriver</span>.<span class="pl-en">getMarkers</span>();
+
+  <span class="pl-c">// Focus markers</span>
+  <span class="pl-smi">mapDriver</span>.<span class="pl-en">focusMarkers</span>(allMarkers);
+
+  <span class="pl-c">// Destroy markers</span>
+  <span class="pl-smi">mapDriver</span>.<span class="pl-en">destroyMarker</span>(marker);</pre></div>
+
+<h2>
+<a id="api" class="anchor" href="#api" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>API</h2>
+
+<div class="highlight highlight-source-js"><pre>  <span class="pl-c">/**</span>
+<span class="pl-c">   * Adds a marker to this.markers list</span>
+<span class="pl-c">   * <span class="pl-k">@private</span></span>
+<span class="pl-c">   * <span class="pl-k">@method</span> addMarker</span>
+<span class="pl-c">   * <span class="pl-k">@param</span> <span class="pl-en">{Marker}</span></span>
+<span class="pl-c">   */</span>
+  <span class="pl-en">addMarker</span>(marker)
+
+  <span class="pl-c">/**</span>
+<span class="pl-c">   * Returns all markers currently in the map</span>
+<span class="pl-c">   * <span class="pl-k">@public</span></span>
+<span class="pl-c">   * <span class="pl-k">@return</span> <span class="pl-en">{Array&lt;Marker&gt;}</span></span>
+<span class="pl-c">   */</span>
+  <span class="pl-en">getMarkers</span>()
+
+  <span class="pl-c">/**</span>
+<span class="pl-c">   * Creates a map marker</span>
+<span class="pl-c">   * <span class="pl-k">@public</span></span>
+<span class="pl-c">   * <span class="pl-k">@param</span> <span class="pl-en">{Object}</span> <span class="pl-smi">config</span> - Must have 'lat' and lng'</span>
+<span class="pl-c">   * <span class="pl-k">@return</span> <span class="pl-en">{Marker}</span></span>
+<span class="pl-c">   */</span>
+  <span class="pl-en">createMarker</span>(config)
+
+  <span class="pl-c">/**</span>
+<span class="pl-c">   * Animates a marker to a specific coordinate</span>
+<span class="pl-c">   * <span class="pl-k">@public</span></span>
+<span class="pl-c">   * <span class="pl-k">@param</span> <span class="pl-en">{Marker}</span> <span class="pl-smi">marker</span></span>
+<span class="pl-c">   * <span class="pl-k">@param</span> <span class="pl-en">{Object}</span> <span class="pl-smi">destination</span> - 'lat' and 'lng'</span>
+<span class="pl-c">   * <span class="pl-k">@param</span> <span class="pl-en">{Int}</span> <span class="pl-smi">duration</span> - In milliseconds</span>
+<span class="pl-c">   */</span>
+  <span class="pl-en">moveMarker</span>(marker, destination, duration <span class="pl-k">=</span> <span class="pl-c1">1000</span>)
+
+  <span class="pl-c">/**</span>
+<span class="pl-c">   * Removes a marker from the map.</span>
+<span class="pl-c">   * <span class="pl-k">@public</span></span>
+<span class="pl-c">   * <span class="pl-k">@param</span> <span class="pl-en">{Marker}</span> <span class="pl-smi">marker</span></span>
+<span class="pl-c">   */</span>
+  <span class="pl-en">destroyMarker</span>(marker)
+
+  <span class="pl-c">/**</span>
+<span class="pl-c">   * Fits map's focus on specified markers</span>
+<span class="pl-c">   * <span class="pl-k">@public</span></span>
+<span class="pl-c">   * <span class="pl-k">@param</span> {Array&lt;Marker}</span>
+<span class="pl-c">   */</span>
+  <span class="pl-en">focusMarkers</span>(markers)
+
+  <span class="pl-c">/**</span>
+<span class="pl-c">   * Converts an array into an object with 'lat' and 'lng'</span>
+<span class="pl-c">   * <span class="pl-k">@public</span></span>
+<span class="pl-c">   * <span class="pl-k">@param</span> <span class="pl-en">{String}</span> <span class="pl-smi">address</span></span>
+<span class="pl-c">   * <span class="pl-k">@return</span> <span class="pl-en">{Promise&lt;Object&gt;}</span></span>
+<span class="pl-c">   */</span>
+  <span class="pl-k">async</span> <span class="pl-en">toLatLng</span>(address)</pre></div>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/lazamar">lazamar</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
