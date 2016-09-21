@@ -7,7 +7,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js"></script>
   <script type="text/javascript">
   	requirejs.config({
-  		baseUrl: './',
+  		baseUrl: '/js',
   		paths: {
         'lodash/fp': 'https://cdnjs.cloudflare.com/ajax/libs/lodash-fp/0.10.4/lodash-fp.min',
         'fl-google-maps-driver': '../dest/index',
@@ -76,8 +76,8 @@
       marker2 = mapDriver.createMarker({
         lat: coords[0].lat,
         lng: coords[0].lng,
-        icon: 'https://upload.wikimedia.org/wikipedia/commons/4/4c/Map_marker_icon_%E2%80%93_Nicolas_Mollet_%E2%80%93_Bike_rising_%E2%80%93_Sports_%E2%80%93_Dark.png',
-        // Info window receives a function to be called
+        icon: 'http://orig12.deviantart.net/71e1/f/2015/330/9/c/marty_walk_cycle_by_logofanatic-d9i5oy1.gif',
+        optimized: false,        // Info window receives a function to be called
         // when marker is clicked. Should return an HTMLElement.
         infoWindow: '<h1>Oh yeah!</h1>',
       });
