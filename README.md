@@ -1,6 +1,6 @@
 # Dead simple Google maps driver
 
-[Checkout the example](https://cdn.rawgit.com/fourlabsldn/fl-google-maps-driver/master/examples/index.html)
+[Checkout the example](https://cdn.rawgit.com/fourlabsldn/fl-google-maps-driver/6efe984d712c3288476fa129f64c175813078fe5/examples/index.html)
 ## How to use:
 Give a look at the examples folder.
 ``` javascript
