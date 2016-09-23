@@ -1,8 +1,8 @@
-// npm install --save-dev gulp path gulp-uglify vinyl-buffer gulp-flatmap rollup-stream rollup-plugin-babel vinyl-source-stream gulp-sourcemaps rollup-plugin-replace rollup-plugin-commonjs rollup-plugin-node-resolve gulp-organiser lodash babel-preset-es2015-rollup babel-plugin-transform-async-to-generator babel-plugin-external-helpers-2
-
+// npm install --save-dev gulp path gulp-uglify vinyl-buffer gulp-flatmap rollup-stream rollup-plugin-babel vinyl-source-stream gulp-sourcemaps rollup-plugin-replace rollup-plugin-commonjs rollup-plugin-node-resolve gulp-organiser lodash babel-preset-es2017 babel-plugin-transform-async-to-generator babel-plugin-external-helpers-2
 /**
   Hidden dependencies:
-  	babel-preset-es2015-rollup
+    babel-plugin-lodash
+    babel-preset-es2017
   	babel-plugin-transform-async-to-generator
   	babel-plugin-external-helpers-2
  */
@@ -30,8 +30,8 @@ const DEFAULT_CONFIG = {
   // Treat these imports as external dependencies and
   // load them from the given paths
   external: [],
-  // Let's use AMD format to serve our files to the front-end
-  format: 'amd',
+  // Let's use UMD format as default so we can import it from anywhere
+  format: 'umd',
   plugins: [
     // Import modules with jsnext:main
     nodeResolve({	jsnext: true, main: true }),
@@ -41,7 +41,7 @@ const DEFAULT_CONFIG = {
     babel({
       exclude: 'node_modules/**',
       babelrc: false,
-      plugins: ['transform-async-to-generator', 'external-helpers-2'],
+      plugins: ['lodash'],
       presets: ['es2017'],
     }),
   ],
