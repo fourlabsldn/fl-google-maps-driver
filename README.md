@@ -2,7 +2,7 @@
 
 [Checkout the example](https://cdn.rawgit.com/fourlabsldn/fl-google-maps-driver/7eed368ecd454d984cc634b84bd0b82465861d7f/examples/index.html)
 ## How to use:
-Give a look at the examples folder.
+Have a look at the examples folder.
 ``` javascript
   const mapDriver = new MapDriver(google, '#map', { center: { lat: 51.473663, lng: -0.203287 }});
 
